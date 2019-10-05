@@ -1,8 +1,11 @@
 ﻿using MasivianAPI.Model;
 using MasivianAPI.Repository;
+using MasivianAPI.Repository.Entity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using static MasivianAPI.Model.NodoModel;
 
 namespace MasivianAPI.Controllers.v1
 {
@@ -21,7 +24,9 @@ namespace MasivianAPI.Controllers.v1
             try
             {
                 var result = await arbol.CrearArbol(arreglo);
-                return Ok(result);
+                var lista = new List<ArbolResultante>();
+                var ResultadoArbol = NodoModel.ImprimirArbol(result, "Inicio", lista);
+                return Ok(ResultadoArbol);
             }
             catch (Exception)
             {
@@ -29,10 +34,41 @@ namespace MasivianAPI.Controllers.v1
             }
         }
 
-        [HttpGet]
-        public IActionResult GetNodo(NodoModel Arbol, int nodo1, int nodo2)
+        [HttpGet("MostrarAncestroRaiz")]
+        public async Task<IActionResult> GetAncestroRaiz(NodoModel infoArbol, int nodo1, int nodo2)
         {
-            return Ok("Mensaje");
+            try
+            {
+                var nodo = new NodoDTO()
+                {
+                    Dato = infoArbol.Dato,
+                    ParDerecha = infoArbol.ParDerecha,
+                    ParIzquierda = infoArbol.ParIzquierda
+                };
+
+                var result = await arbol.BuscarAncestroArbol(nodo, nodo1,nodo2);
+                
+                return Ok("Ancestro mas cercano es:"+ result);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error al buscar el ancestro");
+            }
         }
+
+        [HttpGet("MostrarAncestroArreglo")]
+        public async Task<IActionResult> GetAncestroArreglo(int[] arreglo, int nodo1, int nodo2)
+        {
+            try
+            {
+                var resultado = await arbol.BuscarAncestroArreglo(arreglo, nodo1, nodo2);
+                return Ok("Ancestro mas cercano es:" + resultado);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error al buscar el ancestro");
+            }
+        }
+
     }
 }

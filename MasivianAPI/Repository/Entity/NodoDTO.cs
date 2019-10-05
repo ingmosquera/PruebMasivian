@@ -6,4 +6,5 @@
         public NodoDTO ParDerecha { get; set; }
         public NodoDTO ParIzquierda { get; set; }
     }
+  
 }

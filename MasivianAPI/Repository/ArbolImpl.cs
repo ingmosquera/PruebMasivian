@@ -40,6 +40,31 @@ namespace MasivianAPI.Repository
             }
             return nodo;
         }
-       
+
+        public async Task<int> BuscarAncestroArreglo(int[] lista, int nodo1, int nodo2) {
+            var arbol = await CrearArbol(lista);
+            return  await BuscarAncestroArbol(arbol, nodo1,nodo2);
+        }
+
+        public async Task<int> BuscarAncestroArbol(NodoDTO TodoArbol, int nodo1, int nodo2)
+        {
+            int tempPadre = TodoArbol.Dato;
+            if (nodo1 > tempPadre && nodo2 > tempPadre)
+            {
+                if (TodoArbol.ParDerecha != null)
+                {
+                    return await BuscarAncestroArbol(TodoArbol.ParDerecha, nodo1, nodo2);
+                }
+            }
+
+            if (nodo1 < TodoArbol.Dato && nodo2 < TodoArbol.Dato)
+            {
+                if (TodoArbol.ParDerecha != null)
+                {
+                    return await BuscarAncestroArbol(TodoArbol.ParIzquierda, nodo1, nodo2);
+                }
+            }
+            return tempPadre;
+        }
     }
 }
